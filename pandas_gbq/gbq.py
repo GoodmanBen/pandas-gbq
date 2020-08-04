@@ -18,8 +18,9 @@ try:
     # The BigQuery Storage API client is an optional dependency. It is only
     # required when use_bqstorage_api=True.
     from google.cloud import bigquery_storage_v1beta1
-except ImportError:  # pragma: NO COVER
+except ImportError as e:  # pragma: NO COVER
     bigquery_storage_v1beta1 = None
+    BIG_QUERY_STORAGE_IMPORT_ERROR = e
 
 from pandas_gbq.exceptions import AccessDenied
 import pandas_gbq.schema
@@ -759,8 +760,10 @@ def _make_bqstorage_client(use_bqstorage_api, credentials):
 
     if bigquery_storage_v1beta1 is None:
         raise ImportError(
+            "bigquery_storage_v1beta1 was not imported successfully. "
             "Install the google-cloud-bigquery-storage and fastavro/pyarrow "
-            "packages to use the BigQuery Storage API."
+            "packages to use the BigQuery Storage API. "
+            f"Root Import Error: {BIG_QUERY_STORAGE_IMPORT_ERROR}"
         )
 
     import google.api_core.gapic_v1.client_info
